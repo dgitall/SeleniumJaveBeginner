@@ -6,13 +6,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
+import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 public class NegativeTests {
 
-	@Test(priority=1, groups = { "negativeTests", "smokeTests" })
-	public void incorrectUserNameTest() {
-		System.out.println("Starting incorrectUserNameTest");
+	@Parameters({ "username", "password", "expectedMessage" })
+	@Test(priority = 1, groups = { "negativeTests", "smokeTests" })
+	public void negativeLogInTest(String username, String password, String expectedErrorMessage) {
+		System.out.println("Starting negativeLogInTest with " + username + " and " + password);
 		// Create Driver
 		// Start with the Chrome driver
 		System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver.exe");
@@ -27,12 +29,12 @@ public class NegativeTests {
 		System.out.println("Page is opened.");
 
 //		enter user name
-		WebElement username = driver.findElement(By.id("username"));
-		username.sendKeys("badusername");
+		WebElement usernameField = driver.findElement(By.id("username"));
+		usernameField.sendKeys(username);
 
 //		enter password
-		WebElement password = driver.findElement(By.name("password"));
-		password.sendKeys("SuperSecretPassword!");
+		WebElement passwordField = driver.findElement(By.name("password"));
+		passwordField.sendKeys(password);
 
 //		click login button
 		WebElement logInButton = driver.findElement(By.tagName("button"));
@@ -45,66 +47,17 @@ public class NegativeTests {
 
 		Assert.assertEquals(actualUrl, expectedUrl, "Actual page url is not the same as expected");
 
-//			Failed username message
+//			Failed message
 		WebElement failedUserNameMessage = driver.findElement(By.xpath("//div[@id='flash']"));
-		String expectedMessage = "Your username is invalid!";
 		String actualMessage = failedUserNameMessage.getText();
 		// This fails because the getText() returns the text from subelements, too.
 //		Assert.assertEquals(actualMessage, expectedMessage, "Successful login message Failed");
-		Assert.assertTrue(actualMessage.contains(expectedMessage),
+		Assert.assertTrue(actualMessage.contains(expectedErrorMessage),
 				"Actual message does not contain expected message.\nActual Message: " + actualMessage
-						+ "\nExpected Message: " + expectedMessage);
+						+ "\nExpected Message: " + expectedErrorMessage);
 
 		// Close browser
 		driver.quit();
 	}
 
-	@Test(priority = 2, groups = { "negativeTests"})
-	public void incorrectPasswordTest() {
-		System.out.println("Starting incorrectPasswordTest");
-		// Create Driver
-		// Start with the Chrome driver
-		System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-		WebDriver driver = new ChromeDriver();
-
-		// Maximize browser window
-		driver.manage().window().maximize();
-
-		// open test page
-		String url = "http://the-internet.herokuapp.com/login";
-		driver.get(url);
-		System.out.println("Page is opened.");
-
-//		enter user name
-		WebElement username = driver.findElement(By.id("username"));
-		username.sendKeys("tomsmith");
-
-//		enter password
-		WebElement password = driver.findElement(By.name("password"));
-		password.sendKeys("badpassword");
-
-//		click login button
-		WebElement logInButton = driver.findElement(By.tagName("button"));
-		logInButton.click();
-
-//		verifications:
-//			new url
-		String expectedUrl = "http://the-internet.herokuapp.com/login";
-		String actualUrl = driver.getCurrentUrl();
-
-		Assert.assertEquals(actualUrl, expectedUrl, "Actual page url is not the same as expected");
-
-//			Failed username message
-		WebElement failedUserNameMessage = driver.findElement(By.xpath("//div[@id='flash']"));
-		String expectedMessage = "Your password is invalid!";
-		String actualMessage = failedUserNameMessage.getText();
-		// This fails because the getText() returns the text from subelements, too.
-//		Assert.assertEquals(actualMessage, expectedMessage, "Successful login message Failed");
-		Assert.assertTrue(actualMessage.contains(expectedMessage),
-				"Actual message does not contain expected message.\nActual Message: " + actualMessage
-						+ "\nExpected Message: " + expectedMessage);
-
-		// Close browser
-		driver.quit();
-	}
 }
