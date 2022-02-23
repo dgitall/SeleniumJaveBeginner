@@ -4,18 +4,19 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class NegativeTests {
 
-	@Test
+	@Test(priority=1, groups = { "negativeTests", "smokeTests" })
 	public void incorrectUserNameTest() {
-		System.out.println("Starting loginTest");
+		System.out.println("Starting incorrectUserNameTest");
 		// Create Driver
 		// Start with the Chrome driver
-		System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-		WebDriver driver = new ChromeDriver();
+		System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver.exe");
+		WebDriver driver = new FirefoxDriver();
 
 		// Maximize browser window
 		driver.manage().window().maximize();
@@ -57,10 +58,10 @@ public class NegativeTests {
 		// Close browser
 		driver.quit();
 	}
-	
-	@Test
+
+	@Test(priority = 2, groups = { "negativeTests"})
 	public void incorrectPasswordTest() {
-		System.out.println("Starting loginTest");
+		System.out.println("Starting incorrectPasswordTest");
 		// Create Driver
 		// Start with the Chrome driver
 		System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
