@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -16,12 +17,28 @@ public class LoginTests {
 
 	// alwaysRun will run it even if a different group is selected like in the
 	// positiveLogInTest
+	// Add a parameter to specify the browser driver to use so we can run the same
+	// tests on multiple browsers
+	@Parameters({ "browser" })
 	@BeforeMethod(alwaysRun = true)
-	private void setUp() {
+	private void setUp(String browser) {
 		// Create Driver
-		// Start with the Chrome driver
-		System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
-		driver = new ChromeDriver();
+		switch (browser) {
+		case "chrome": {
+			// Chrome driver
+			System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
+			driver = new ChromeDriver();
+			break;
+		}
+		case "firefox": {
+			// Firefox driver
+			System.setProperty("webdriver.gecko.driver", "src/main/resources/geckodriver.exe");
+			driver = new FirefoxDriver();
+			break;
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + browser);
+		}
 
 		// Maximize browser window
 		driver.manage().window().maximize();
