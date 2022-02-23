@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class PositiveTests {
@@ -16,9 +17,6 @@ public class PositiveTests {
 		System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
 
-		// Just for this example, slow down the code to see it.
-		sleep(3000);
-
 		// Maximize browser window
 		driver.manage().window().maximize();
 
@@ -26,23 +24,40 @@ public class PositiveTests {
 		String url = "http://the-internet.herokuapp.com/login";
 		driver.get(url);
 		System.out.println("Page is opened.");
-		
-		sleep(2000);
 
 //		enter user name
 		WebElement username = driver.findElement(By.id("username"));
-		
+		username.sendKeys("tomsmith");
+
 //		enter password
-		WebElement password = driver.findElement(By.xpath("//input[@id='password']"));
-		
+		WebElement password = driver.findElement(By.name("password"));
+		password.sendKeys("SuperSecretPassword!");
+
 //		click login button
-		WebElement login = driver.findElement(By.xpath("//form[@id='login']/button[@class='radius']"));
-		
+		WebElement logInButton = driver.findElement(By.tagName("button"));
+		logInButton.click();
+
 //		verifications:
 //			new url
+		String expectedUrl = "http://the-internet.herokuapp.com/secure";
+		String actualUrl = driver.getCurrentUrl();
+
+		Assert.assertEquals(actualUrl, expectedUrl, "Actual page url is not the same as expected");
+
 //			logout button visible
+		WebElement logOutButton = driver.findElement(By.xpath("//a[@class='button secondary radius']"));
+		Assert.assertTrue(logOutButton.isDisplayed(), "Log Out button is not visible.");
+
 //			successful login message
-		
+		WebElement successMessage = driver.findElement(By.cssSelector("#flash"));
+		String expectedMessage = "You logged into a secure area!";
+		String actualMessage = successMessage.getText();
+		// This fails because the getText() returns the text from subelements, too.
+//		Assert.assertEquals(actualMessage, expectedMessage, "Successful login message Failed");
+		Assert.assertTrue(actualMessage.contains(expectedMessage),
+				"Actual message does not contain expected message.\nActual Message: " + actualMessage
+						+ "\nExpected Message: " + expectedMessage);
+
 		// Close browser
 		driver.quit();
 
