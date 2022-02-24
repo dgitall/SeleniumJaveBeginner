@@ -9,7 +9,7 @@
 		<classes>
 			<class name="com.herokuapp.theinternet.ExceptionTests">
 				<methods>
-					<include name="staleElementTest"></include>
+					<include name="disabledElementTest"></include>
 
 				</methods>
 			</class>

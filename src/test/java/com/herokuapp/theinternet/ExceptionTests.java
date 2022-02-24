@@ -227,13 +227,67 @@ public class ExceptionTests {
 				"Checkbox is still visible, but shouldn't be");
 
 		// Now check if clicking again does the correct thing
-		// NOTE: His code grabbed the button based on the text. That required getting it again because the text changed (or did it?)
-		//	I used the XPath which works even after the text on the button changes
+		// NOTE: His code grabbed the button based on the text. That required getting it
+		// again because the text changed (or did it?)
+		// I used the XPath which works even after the text on the button changes
 		removeButton.click();
-		
-		//	Must get the element again because it was added again. 
+
+		// Must get the element again because it was added again.
 		checkBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("checkbox")));
 		Assert.assertTrue(checkBox.isDisplayed(), "Checkbox is not visible, but should be");
+
+	}
+
+	@Test
+	public void disabledElementTest() {
+		System.out.println("Starting disabledElementTest");
+
+		// open test page
+		String url = "https://the-internet.herokuapp.com/dynamic_controls";
+		driver.get(url);
+		System.out.println("Page is opened.");
+
+		WebElement textBox = driver.findElement(By.xpath("//form[@id='input-example']/input[@type='text']"));
+
+		WebElement enableButton = driver.findElement(By.xpath("//form[@id='input-example']/button[@type='button']"));
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		enableButton.click();
+
+		wait.until(ExpectedConditions.elementToBeClickable(textBox));
+		String enteredText = new String("Some Text");
+		textBox.sendKeys(enteredText);
+
+		Assert.assertTrue(wait.until(ExpectedConditions.textToBePresentInElementValue(textBox, enteredText)),
+				"Entered Text Not Found" + enteredText);
+
+		// If only checking isDisplayed() then it fails on that call (even before the
+		// assert).
+		// This is because the checkBox element was removed from the webpage.
+		// The fix is to include the wait.until inside of the assertion. It returns true
+		// if it is invisible
+		//
+//		Assert.assertFalse(checkBox.isDisplayed());
+//		Assert.assertTrue(wait.until(ExpectedConditions.invisibilityOf(checkBox)),
+//				"Checkbox is still visible, but shouldn't be");
+
+		// This handles when you have a stale element. But, it doesn't always work.
+		// Instead, you can check the stalenessOf condition to explicitly check for
+		// staleness
+
+//		Assert.assertTrue(wait.until(ExpectedConditions.stalenessOf(checkBox)),
+//				"Checkbox is still visible, but shouldn't be");
+
+		// Now check if clicking again does the correct thing
+		// NOTE: His code grabbed the button based on the text. That required getting it
+		// again because the text changed (or did it?)
+		// I used the XPath which works even after the text on the button changes
+//		removeButton.click();
+
+		// Must get the element again because it was added again.
+//		checkBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("checkbox")));
+//		Assert.assertTrue(checkBox.isDisplayed(), "Checkbox is not visible, but should be");
 
 	}
 
