@@ -148,7 +148,7 @@ public class ExceptionTests {
 
 	@Test(priority = 3)
 	public void noSuchElementTest() {
-		System.out.println("Starting noVisibleTest");
+		System.out.println("Starting noSuchElementTest");
 
 		// open test page
 		String url = "http://the-internet.herokuapp.com/dynamic_loading/2";
@@ -173,7 +173,7 @@ public class ExceptionTests {
 		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 		WebElement helloWorldMessage = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("finish")));
 
-		String expectedMessage = "Hello World! broken";
+		String expectedMessage = "Hello World!";
 //		String actualMessage = helloWorldMessage.getText();
 		// This fails because the getText() returns the text from subelements, too.
 //		Assert.assertEquals(actualMessage, expectedMessage, "Successful login message Failed");
@@ -181,11 +181,59 @@ public class ExceptionTests {
 //				"Actual message does not contain expected message.\nActual Message: " + actualMessage
 //						+ "\nExpected Message: " + expectedMessage);
 
-		// Note this version wraps it all into one assert call. THis version also waits for the text in the
-		// element, not the element itself. So, if the text is different, it will sit there until the timeout
+		// Note this version wraps it all into one assert call. THis version also waits
+		// for the text in the
+		// element, not the element itself. So, if the text is different, it will sit
+		// there until the timeout
 		Assert.assertTrue(
 				wait.until(ExpectedConditions.textToBePresentInElementLocated(By.id("finish"), expectedMessage)),
 				"Actual message does not contain expected message");
+
+	}
+
+	@Test
+	public void staleElementTest() {
+		System.out.println("Starting staleElementTest");
+
+		// open test page
+		String url = "https://the-internet.herokuapp.com/dynamic_controls";
+		driver.get(url);
+		System.out.println("Page is opened.");
+
+		WebElement checkBox = driver.findElement(By.id("checkbox"));
+
+		WebElement removeButton = driver.findElement(By.xpath("//form[@id='checkbox-example']/button[@type='button']"));
+
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+		removeButton.click();
+//		wait.until(ExpectedConditions.invisibilityOf(checkBox));
+
+		// If only checking isDisplayed() then it fails on that call (even before the
+		// assert).
+		// This is because the checkBox element was removed from the webpage.
+		// The fix is to include the wait.until inside of the assertion. It returns true
+		// if it is invisible
+		//
+//		Assert.assertFalse(checkBox.isDisplayed());
+//		Assert.assertTrue(wait.until(ExpectedConditions.invisibilityOf(checkBox)),
+//				"Checkbox is still visible, but shouldn't be");
+
+		// This handles when you have a stale element. But, it doesn't always work.
+		// Instead, you can check the stalenessOf condition to explicitly check for
+		// staleness
+
+		Assert.assertTrue(wait.until(ExpectedConditions.stalenessOf(checkBox)),
+				"Checkbox is still visible, but shouldn't be");
+
+		// Now check if clicking again does the correct thing
+		// NOTE: His code grabbed the button based on the text. That required getting it again because the text changed (or did it?)
+		//	I used the XPath which works even after the text on the button changes
+		removeButton.click();
+		
+		//	Must get the element again because it was added again. 
+		checkBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("checkbox")));
+		Assert.assertTrue(checkBox.isDisplayed(), "Checkbox is not visible, but should be");
 
 	}
 

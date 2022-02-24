@@ -9,8 +9,8 @@
 		<classes>
 			<class name="com.herokuapp.theinternet.ExceptionTests">
 				<methods>
-					<include name="noVisibleTest"></include>
-					<include name="noSuchElementTest"></include>
+					<include name="staleElementTest"></include>
+
 				</methods>
 			</class>
 		</classes>
