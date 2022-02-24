@@ -3,13 +3,13 @@
 <suite name="Exceptions" verbose="1">
 
 
-	<test name="noVisibleTest">
+	<test name="Exceptions Test">
 		<parameter name="browser" value="chrome" />
 
 		<classes>
 			<class name="com.herokuapp.theinternet.ExceptionTests">
 				<methods>
-					<include name="noVisibleTest"></include>
+					<include name="timeoutTest"></include>
 				</methods>
 			</class>
 		</classes>
