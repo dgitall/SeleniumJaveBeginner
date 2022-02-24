@@ -8,6 +8,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -45,9 +47,7 @@ public class LoginTests {
 
 		// Maximize browser window
 		driver.manage().window().maximize();
-		
-		// implicit wait
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
 	}
 
 	@Test(priority = 1, groups = { "positiveTests", "smokeTests" })
@@ -66,9 +66,13 @@ public class LoginTests {
 //		enter password
 		WebElement password = driver.findElement(By.name("password"));
 		password.sendKeys("SuperSecretPassword!");
+		
+		// Create a variable for waits on buttons
+		WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
 //		click login button
 		WebElement logInButton = driver.findElement(By.tagName("button"));
+		wait.until(ExpectedConditions.elementToBeClickable(logInButton));
 		logInButton.click();
 
 //		verifications:
